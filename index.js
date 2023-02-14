@@ -66,21 +66,22 @@ class ProductManager {
     } 
 
     async updateProduct (id, data){
-        const producto = await this.getProducts ();
+        let products = await this.getProducts()
+        let productoModificado = products.find(i => i.id === id)
 
-        const updateProduct = producto.map ((p)=>{
-            if (p.id === id){
-                return{
-                    ...p,
-                    data,
-                    id,
-                }
+        if (Object.keys(data).includes('id')){
+            throw new Error('ID UNICO')
+        }
+        
+        productoModificado = {...productoModificado, ...data};
 
-            }
-            return p
-        })
+        let newArray = products.filter( prods => prods.id !== id);
 
-        await fs.promises.writeFile (this.#path,JSON.stringify(updateProduct))
+        newArray = [...newArray, productoModificado];
+
+        await fs.promises.writeFile(this.#path, JSON.stringify(newArray));
+
+        console.log('Modificación exitosa')
     }
 
 
@@ -105,10 +106,15 @@ async function main() {
   
     await productDates.addProduct ("Vaso", "Vaso de vidrio elegante y resistente", 200, "Imagen", 180, 25)
     await productDates.addProduct ("Vaso plastico", "Vaso de plastico elegante y resistente", 300, "Imag", 182, 15)
-  
+
     products = await productDates.getProducts();
+
     console.log(products);
 
+
+    // await productDates.updateProduct (1, {title:"modif", price:200})
+    // products = await productDates.getProducts();
+    // console.log(products);
 
     // await productDates.deleteProduct (0)
     // products = await productDates.getProducts();
