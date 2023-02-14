@@ -65,6 +65,25 @@ class ProductManager {
         }
     } 
 
+    async updateProduct (id, data){
+        const producto = await this.getProducts ();
+
+        const updateProduct = producto.map ((p)=>{
+            if (p.id === id){
+                return{
+                    ...p,
+                    data,
+                    id,
+                }
+
+            }
+            return p
+        })
+
+        await fs.promises.writeFile (this.#path,JSON.stringify(updateProduct))
+    }
+
+
     async deleteProduct(id){
         let products = await this.getProducts();
 
@@ -85,6 +104,7 @@ async function main() {
     console.log(products);
   
     await productDates.addProduct ("Vaso", "Vaso de vidrio elegante y resistente", 200, "Imagen", 180, 25)
+    await productDates.addProduct ("Vaso plastico", "Vaso de plastico elegante y resistente", 300, "Imag", 182, 15)
   
     products = await productDates.getProducts();
     console.log(products);
