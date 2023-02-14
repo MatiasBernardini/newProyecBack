@@ -53,16 +53,27 @@ class ProductManager {
     }
 
     async getProductById (newId){
-        const idFilter = await this.#path.find ((p)=>{
+        let productos = this.getProducts ();
+
+        const idFilter = await productos.find ((p)=>{
             return p.id === newId;
          });
          if (idFilter){
             return idFilter
-        } else {
+        } else {  
             return "ID no encontrado"
         }
     } 
 
+    async deleteProduct(id){
+        let products = await this.getProducts();
+
+        let eliminarProducto = products.filter(p => p.id !== id);
+
+        await fs.promises.writeFile(this.#path,JSON.stringify(eliminarProducto));
+
+        console.log("Producto eliminado de JSON")
+    }
 }
 
 
@@ -73,11 +84,15 @@ async function main() {
   
     console.log(products);
   
-    await productDates.addProduct ("Vaso", "Vaso ", 300, "Imagen", 180, 25)
+    await productDates.addProduct ("Vaso", "Vaso de vidrio elegante y resistente", 200, "Imagen", 180, 25)
   
     products = await productDates.getProducts();
     console.log(products);
 
+
+    // await productDates.deleteProduct (0)
+    // products = await productDates.getProducts();
+    // console.log(products);
   }
   
 main();
